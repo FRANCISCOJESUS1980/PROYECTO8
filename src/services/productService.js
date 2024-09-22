@@ -1,3 +1,4 @@
+const cloudinary = require('../config/cloudinary')
 const { Product } = require('../models/Product')
 const { Category } = require('../models/Category')
 
@@ -21,8 +22,14 @@ const getProducts = async () => {
 }
 
 const deleteProduct = async (id) => {
-  const product = await Product.findByIdAndDelete(id)
+  const product = await Product.findById(id)
+
   if (!product) throw new Error('Producto no encontrado')
+  const imageId = product.image.split('/').pop().split('.')[0]
+
+  await cloudinary.uploader.destroy(imageId)
+  await product.remove()
+
   return product
 }
 
