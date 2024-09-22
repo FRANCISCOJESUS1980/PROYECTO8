@@ -1,40 +1,29 @@
-const {
-  createProduct,
-  getProducts,
-  deleteProduct
-} = require('../services/productService')
-const { validateProduct } = require('../models/Product')
-const { createError } = require('../utils/errorResponses')
+const productService = require('../services/productService')
 
 const createNewProduct = async (req, res, next) => {
   try {
-    const { error } = validateProduct(req.body)
-    if (error) return next(createError(400, error.details[0].message))
-
-    const product = await createProduct({ ...req.body, image: req.file.path })
-    res.status(201).json(product)
-  } catch (err) {
-    next(err)
+    const newProduct = await productService.createNewProduct(req.body, req.file)
+    res.status(201).json(newProduct)
+  } catch (error) {
+    next(error)
   }
 }
 
 const listProducts = async (req, res, next) => {
   try {
-    const products = await getProducts()
+    const products = await productService.listProducts()
     res.status(200).json(products)
-  } catch (err) {
-    next(err)
+  } catch (error) {
+    next(error)
   }
 }
 
 const removeProduct = async (req, res, next) => {
   try {
-    const product = await deleteProduct(req.params.id)
-    res
-      .status(200)
-      .json({ message: 'Producto eliminado correctamente', product })
-  } catch (err) {
-    next(err)
+    await productService.deleteProduct(req.params.id)
+    res.status(204).send()
+  } catch (error) {
+    next(error)
   }
 }
 

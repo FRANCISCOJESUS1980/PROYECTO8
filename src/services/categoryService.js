@@ -1,13 +1,20 @@
-const { Category } = require('../models/Category')
+const Category = require('../models/Category').Category
+const { deleteUnusedImage } = require('../middlewares/cloudinaryUpload')
 
-const createCategory = async (categoryData) => {
-  const category = new Category(categoryData)
-  await category.save()
-  return category
+const createNewCategory = async (categoryData, file) => {
+  const image = file ? file.path : ''
+  return await Category.create({ ...categoryData, image })
 }
 
-const getCategories = async () => {
-  return Category.find().populate('products')
+const listCategories = async () => {
+  return await Category.find()
 }
 
-module.exports = { createCategory, getCategories }
+const deleteCategory = async (id) => {
+  const category = await Category.findByIdAndDelete(id)
+  if (category) {
+    await deleteUnusedImage(category.image)
+  }
+}
+
+module.exports = { createNewCategory, listCategories, deleteCategory }

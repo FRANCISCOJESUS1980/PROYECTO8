@@ -1,11 +1,21 @@
 const express = require('express')
-const { errorHandler } = require('./src/middlewares/errorHandler')
 const connectDB = require('./src/config/db')
-const productRoutes = require('./src/routes/productRoutes')
 const categoryRoutes = require('./src/routes/categoryRoutes')
-require('dotenv').config()
+const productRoutes = require('./src/routes/productRoutes')
+const errorHandler = require('./src/middlewares/errorHandler')
+const helmet = require('helmet')
+const rateLimit = require('express-rate-limit')
 
 const app = express()
+const env = require('./src/config/envConfig')
+
+app.use(helmet())
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100
+})
+app.use(limiter)
 
 connectDB()
 
