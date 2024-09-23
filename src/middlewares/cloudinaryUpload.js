@@ -6,8 +6,12 @@ const { createError } = require('../utils/errorResponses')
 const storage = new CloudinaryStorage({
   cloudinary,
   params: {
-    folder: async (req) => req.body.folder || 'default-folder',
-    format: async () => 'png'
+    folder: 'default-folder',
+    format: (req, file) => {
+      const extension = file.mimetype.split('/')[1].toLowerCase()
+      const allowedFormats = ['jpg', 'jpeg', 'png', 'gif', 'webp']
+      return allowedFormats.includes(extension) ? extension : 'png'
+    }
   }
 })
 
