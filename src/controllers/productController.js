@@ -55,11 +55,24 @@ const removeProduct = async (req, res, next) => {
     next(error)
   }
 }
+const deleteProductController = async (req, res) => {
+  try {
+    const { id } = req.params
+    await productService.deleteProduct(id)
+    return res.status(204).send()
+  } catch (error) {
+    console.error('Error al eliminar el producto:', error)
+    return res
+      .status(500)
+      .json({ message: 'Error al eliminar el producto: ' + error.message })
+  }
+}
 
 module.exports = {
   createNewProduct,
   listProducts,
   getProductById,
   updateProduct,
-  removeProduct
+  removeProduct,
+  deleteProductController
 }

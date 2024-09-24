@@ -1,21 +1,18 @@
 const mongoose = require('mongoose')
 const Product = require('../models/Product').Product
 const cloudinary = require('../config/cloudinary')
-
+const deleteProductController = require('../controllers/productController')
 const createNewProduct = async (data, file) => {
   try {
-    if (data.category) {
-      data.category = new mongoose.Types.ObjectId(data.category)
-    }
-
     const uploadResponse = await cloudinary.uploader.upload(file.path, {
+      resource_type: 'auto',
       folder: 'products'
     })
 
     data.image = uploadResponse.secure_url
     const newProduct = new Product({
       ...data,
-      imageUrl: uploadResponse.secure_url,
+      image: uploadResponse.secure_url,
       cloudinaryId: uploadResponse.public_id
     })
 
@@ -53,9 +50,18 @@ const updateProduct = async (id, data, file) => {
 
 const deleteProduct = async (id) => {
   const product = await Product.findById(id)
-  if (!product) return null
+  if (!product) {
+    throw new Error('Producto no encontrado')
+  }
 
-  await cloudinary.uploader.destroy(product.cloudinaryId)
+  console.log('Producto encontrado:', product)
+
+  if (product.cloudinaryId) {
+    await cloudinary.uploader.destroy(product.cloudinaryId)
+  } else {
+    throw new Error('public_id no encontrado para el producto')
+  }
+
   return await Product.findByIdAndDelete(id)
 }
 
