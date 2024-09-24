@@ -5,7 +5,6 @@ dotenv.config()
 if (!process.env.DB_URL) {
   throw new Error('Falta la variable de entorno DB_URL en el archivo .env')
 }
-
 const connectDB = async () => {
   try {
     await mongoose.connect(process.env.DB_URL)

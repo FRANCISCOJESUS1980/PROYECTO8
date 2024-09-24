@@ -6,7 +6,7 @@ const {
 } = require('../controllers/categoryController')
 const { uploadAndHandleError } = require('../middlewares/cloudinaryUpload')
 const { validate } = require('../middlewares/validate')
-const { categorySchema } = require('../models/Category')
+const { joiCategorySchema } = require('../models/Category')
 
 const router = express.Router()
 
@@ -19,7 +19,7 @@ router.post(
   '/',
   assignCategoryFolder,
   uploadAndHandleError,
-  validate(categorySchema),
+  validate(joiCategorySchema),
   createNewCategory
 )
 router.get('/', listCategories)

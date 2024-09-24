@@ -5,11 +5,17 @@ const productRoutes = require('./src/routes/productRoutes')
 const errorHandler = require('./src/middlewares/errorHandler')
 const helmet = require('helmet')
 const rateLimit = require('express-rate-limit')
-
+const morgan = require('morgan')
 const app = express()
 const env = require('./src/config/envConfig')
 
 app.use(helmet())
+
+if (process.env.NODE_ENV === 'production') {
+  app.use(morgan('combined'))
+} else {
+  app.use(morgan('dev'))
+}
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -26,6 +32,7 @@ app.use('/api/categories', categoryRoutes)
 
 app.use(errorHandler)
 
-app.listen(3000, () => {
-  console.log('Servidor levantado en: http://localhost:3000')
+const PORT = env.PORT || 3000
+app.listen(PORT, () => {
+  console.log(`Servidor levantado en: http://localhost:${PORT}`)
 })

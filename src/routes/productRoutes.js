@@ -6,7 +6,7 @@ const {
 } = require('../controllers/productController')
 const { uploadAndHandleError } = require('../middlewares/cloudinaryUpload')
 const { validate } = require('../middlewares/validate')
-const { productSchema } = require('../models/Product')
+const { joiProductSchema } = require('../models/Product')
 
 const router = express.Router()
 
@@ -19,7 +19,7 @@ router.post(
   '/',
   assignProductFolder,
   uploadAndHandleError,
-  validate(productSchema),
+  validate(joiProductSchema),
   createNewProduct
 )
 router.get('/', listProducts)

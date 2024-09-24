@@ -2,14 +2,17 @@ const Product = require('../models/Product').Product
 const cloudinary = require('../config/cloudinary')
 
 const createNewProduct = async (data, file) => {
-  const uploadResponse = await cloudinary.uploader.upload(file.path, {
-    folder: 'products'
-  })
+  let uploadResponse
+  if (file) {
+    uploadResponse = await cloudinary.uploader.upload(file.path, {
+      folder: 'products'
+    })
+  }
 
   const newProduct = new Product({
     ...data,
-    imageUrl: uploadResponse.secure_url,
-    cloudinaryId: uploadResponse.public_id
+    image: uploadResponse ? uploadResponse.secure_url : null,
+    cloudinaryId: uploadResponse ? uploadResponse.public_id : null
   })
 
   return newProduct.save()
@@ -26,8 +29,9 @@ const updateProduct = async (id, data, file) => {
   const product = await Product.findById(id)
   if (!product) return null
 
+  let uploadResponse
   if (file) {
-    const uploadResponse = await cloudinary.uploader.upload(file.path, {
+    uploadResponse = await cloudinary.uploader.upload(file.path, {
       folder: 'products'
     })
     data.imageUrl = uploadResponse.secure_url
