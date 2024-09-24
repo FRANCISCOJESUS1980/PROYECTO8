@@ -4,6 +4,7 @@ const cloudinary = require('../config/cloudinary')
 const createNewCategory = async (data, file) => {
   try {
     const uploadResponse = await cloudinary.uploader.upload(file.path, {
+      resource_type: 'auto',
       folder: 'categories'
     })
     const newCategory = new Category({
@@ -51,12 +52,9 @@ const deleteCategory = async (id) => {
   console.log('Categoría encontrada:', category)
 
   if (category.cloudinaryId) {
-    try {
-      await cloudinary.uploader.destroy(category.cloudinaryId)
-    } catch (error) {
-      console.error('Error al eliminar imagen de Cloudinary:', error.message)
-      throw new Error('Error eliminando la imagen de Cloudinary')
-    }
+    await cloudinary.uploader.destroy(category.cloudinaryId)
+  } else {
+    throw new Error('public_id no encontrado para la categoría')
   }
 
   return await Category.findByIdAndDelete(id)
