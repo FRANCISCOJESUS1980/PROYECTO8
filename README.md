@@ -23,6 +23,7 @@ Tecnologías Utilizadas
 - Cloudinary
 - Multer (para la carga de archivos)
 - dotenv (para la gestión de variables de entorno)
+- joi (validacion de datos)
 
 Estructura del Proyecto
 
@@ -55,6 +56,7 @@ Para inicializar datos en tu base de datos, puedes usar el script de semilla que
 Notas
 Las imágenes subidas se gestionan mediante Cloudinary y se eliminan automáticamente cuando se elimina la categoría o producto correspondiente de la base de datos.
 Asegúrate de que las imágenes que subas a Cloudinary se están utilizando efectivamente para evitar acumulaciones innecesarias.
+he utilizado chatgpt para hacer la estructura del proyecto en el readme
 
 Licencia
 Este proyecto está bajo la Licencia de FRANCISCO JESUS
