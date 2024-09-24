@@ -1,22 +1,30 @@
+const mongoose = require('mongoose')
 const Product = require('../models/Product').Product
 const cloudinary = require('../config/cloudinary')
 
 const createNewProduct = async (data, file) => {
-  let uploadResponse
-  if (file) {
-    uploadResponse = await cloudinary.uploader.upload(file.path, {
+  try {
+    if (data.category) {
+      data.category = new mongoose.Types.ObjectId(data.category)
+    }
+
+    const uploadResponse = await cloudinary.uploader.upload(file.path, {
       folder: 'products'
     })
+
+    data.image = uploadResponse.secure_url
+    const newProduct = new Product({
+      ...data,
+      imageUrl: uploadResponse.secure_url,
+      cloudinaryId: uploadResponse.public_id
+    })
+
+    return await newProduct.save()
+  } catch (error) {
+    throw new Error('Error creando nuevo producto: ' + error.message)
   }
-
-  const newProduct = new Product({
-    ...data,
-    image: uploadResponse ? uploadResponse.secure_url : null,
-    cloudinaryId: uploadResponse ? uploadResponse.public_id : null
-  })
-
-  return newProduct.save()
 }
+
 const listProducts = async () => {
   return await Product.find()
 }

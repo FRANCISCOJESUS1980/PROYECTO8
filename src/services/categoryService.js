@@ -42,17 +42,21 @@ const updateCategory = async (id, data, file) => {
 
   return await Category.findByIdAndUpdate(id, data, { new: true })
 }
-
 const deleteCategory = async (id) => {
   const category = await Category.findById(id)
   if (!category) {
     throw new Error('Categoría no encontrada')
   }
+
   console.log('Categoría encontrada:', category)
+
   if (category.cloudinaryId) {
-    await cloudinary.uploader.destroy(category.cloudinaryId)
-  } else {
-    throw new Error('public_id no encontrado para la categoría')
+    try {
+      await cloudinary.uploader.destroy(category.cloudinaryId)
+    } catch (error) {
+      console.error('Error al eliminar imagen de Cloudinary:', error.message)
+      throw new Error('Error eliminando la imagen de Cloudinary')
+    }
   }
 
   return await Category.findByIdAndDelete(id)
